@@ -98,6 +98,35 @@ Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan 
     - Prabakusuma:8001
     - Abimanyu:8002
     - Wisanggeni:8003
+    
+### Arjuna 
+Buat file baru di direktori `/etc/nginx/sites-available` dengan nama `lb-arjuna`
+```
+http {
+    upstream workers {
+        server 192.201.3.2:8001;
+        server 192.201.3.3:8002;
+        server 192.201.3.4:8003;
+    }
+
+    server {
+        listen 80;
+        server_name arjuna.d20.com;
+        location / {
+            proxy_pass http://workers;
+        }
+    }
+}
+```
+Simpan kemudian buat `symlink`
+```
+ ln -s /etc/nginx/sites-available/lb-jarkom /etc/nginx/sites-enabled
+```
+### Nakula
+Lakukan pengujian pada client Nakula dengan menjalankan perintah lynx
+```
+lynx http://arjuna.d20.com
+```
 ## Soal 11
 Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 ## Soal 12
