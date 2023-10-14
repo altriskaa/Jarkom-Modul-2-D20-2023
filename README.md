@@ -167,10 +167,15 @@ Uji coba menggunakan `lynx abimanyu.d20.com`
 ## Soal 12
 Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 ### Abimanyu
-Aktifkan Modul Rewrite lalu restart Apache
+Konfigurasi file `/var/www/abimanyu.d20.com/.htaccess`
 ```
 a2enmod rewrite
 service apache2 restart
+echo "
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) /index.php/\$1 [L]
 ```
 Buka file `abimanyu.d20.com.conf` pada direktori `/etc/apache2/sites-available/` lalu tambahkan aturan penulisan ulang URL seperti berikut  
 ```
@@ -182,13 +187,15 @@ Buka file `abimanyu.d20.com.conf` pada direktori `/etc/apache2/sites-available/`
     ErrorLog \${APACHE_LOG_DIR}/error.log
     CustomLog \${APACHE_LOG_DIR}/access.log combined
 
-    RewriteEngine On
-    RewriteRule ^/index.php/(.*)$ /$1 [L]
+    <Directory /var/www/abimanyu.d20.com>
+    	Options +FollowSymLinks -Multiviews
+    	AllowOverride All
 </VirtualHost>
 ```
 Restart apache `service apache2 restart`
 ## Soal 13
 Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+
 ## Soal 14
 Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 ## Soal 15
