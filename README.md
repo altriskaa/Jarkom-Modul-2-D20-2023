@@ -128,7 +128,42 @@ Lakukan pengujian pada client Nakula dengan menjalankan perintah lynx
 lynx http://arjuna.d20.com
 ```
 ## Soal 11
-Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
+Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy  
+### Abimanyu
+Install Apache, PHP, OpenSSL
+```
+apt-get install apache2 -y
+service apache2 start
+apt-get install php -y
+apt-get install libapache2-mod-php7.0 -y
+service apache2 
+apt-get install ca-certificates openssl -y
+```
+Buat file konfigurasi baru dengan nama `abimanyu.d20.com.conf` pada direktori `/etc/apache2/sites-available/`, lalu isi dengan konfigurasi berikut
+```
+<VirtualHost *:80>
+    ServerAdmin webmaster@abimanyu.d20.com
+    ServerName www.abimanyu.d20.com
+    DocumentRoot /var/www/abimanyu.d20
+
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+Aktifkan konfigurasi 
+```
+a2ensite abimanyu.d20.com
+```
+Restart apache dengan perintah `service apache2 restart`  
+Pindah ke direktori `/var/www` lalu buat direkortori baru dengan nama `abimanyu.d20.com`, lalu buat file `index.php`  
+Isi file tersebut seperti berikut
+```
+<?php
+	if($_SERVER['REQUEST_URI'] == '/index.php/home' || $_SERVER['REQUEST_URI'] == '/home' || $_SERVER['REQUEST_URI'] == '/index.php' || $_SERVER['REQUEST_URI'] == '/') readfile('home.html');
+	else http_response_code(404);
+?>
+```
+Uji coba menggunakan `lynx abimanyu.d20.com` 
 ## Soal 12
 Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 ## Soal 13
