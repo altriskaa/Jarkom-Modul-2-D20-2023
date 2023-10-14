@@ -32,7 +32,7 @@ Buat direktori baru di `/var/www` dengan nama `prabakusuma`
 ```
  mkdir /var/www/prabakusuma
 ```
-masuk direktori `prabakusuma` lalu buat file `index.php`
+masuk direktori `prabakusuma` ltambahkan file `index.php` dari soal yang berisi seperti berikut
 ```
 <?php
 $hostname = gethostname();
@@ -155,8 +155,7 @@ Aktifkan konfigurasi
 a2ensite abimanyu.d20.com.conf
 ```
 Restart apache dengan perintah `service apache2 restart`  
-Pindah ke direktori `/var/www` lalu buat direkortori baru dengan nama `abimanyu.d20.com`, lalu buat file `index.php`  
-Isi file tersebut seperti berikut
+Pindah ke direktori `/var/www` lalu buat direkortori baru dengan nama `abimanyu.d20.com`, lalu tambahkan file `index.php` dari soal yang berisi seperti ini
 ```
 <?php
 	if($_SERVER['REQUEST_URI'] == '/index.php/home' || $_SERVER['REQUEST_URI'] == '/home' || $_SERVER['REQUEST_URI'] == '/index.php' || $_SERVER['REQUEST_URI'] == '/') readfile('home.html');
