@@ -418,6 +418,24 @@ Kemudian konfigurasi file `/etc/apache2/sites-available/rjp.baratayuda.abimanyu.
 ```
 Lalu `service apache2 restart` dan lakukan pengujian  
 ## Soal 19
-Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
+Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)  
+### Abimanyu
+Konfigurasi file `/etc/apache2/sites-available/000-default.conf`
+```
+<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        RewriteEngine On
+        RewriteCond %{HTTP_HOST} !^abimanyu.d20.com$
+        RewriteRule /.* http://abimanyu.d20.com/ [R]
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>
+```
+Lalu Lalu `service apache2 restart` kemudian uji `lynx 192.201.3.3`
 ## Soal 20
 Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
