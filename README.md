@@ -236,15 +236,14 @@ Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf
         ServerName parikesit.abimanyu.d20.com
         ServerAlias www.parikesit.abimanyu.d20.com
 
-        ErrorDocument 404 /error/403.html
-        ErrorDocument 500 /error/403.html
-        ErrorDocument 502 /error/403.html
-        ErrorDocument 503 /error/403.html
-        ErrorDocument 504 /error/403.html
-
         <Directory /var/www/parikesit.abimanyu.d20.com/public>
                 Options +Indexes
         </Directory>
+
+	<Directory /var/www/parikesit.abimanyu.d20/secret>
+	        Options -Indexes  
+	        Deny from all 
+	</Directory>
 
         ErrorLog \${APACHE_LOG_DIR}/error.log
         CustomLog \${APACHE_LOG_DIR}/access.log combined
