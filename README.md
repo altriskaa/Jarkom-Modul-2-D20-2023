@@ -194,7 +194,35 @@ Buka file `abimanyu.d20.com.conf` pada direktori `/etc/apache2/sites-available/`
 Restart apache `service apache2 restart`
 ## Soal 13
 Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf  
+```
+<VirtualHost *:80>
 
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/parikesit.abimanyu.d20.com
+        ServerName parikesit.abimanyu.d20.com
+        ServerAlias www.parikesit.abimanyu.d20.com
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /var/www/abimanyu.d20.com>
+                Options +FollowSymLinks -Multiviews
+                AllowOverride All
+        </Directory>
+</VirtualHost>
+```
+Aktifkan dengan `a2ensite parikesit.abimanyu.d20.com`  
+Lalu buat direktori baru dan copy file content  
+```
+mkdir /var/www/parikesit.abimanyu.d20.com
+cp -r /var/www/parikesit.abimanyu/. /var/www/parikesit.abimanyu.d20.com
+```
+kemudian `service apache2 restart`  
+Uji coba pada client  
+```
+lynx parikesit.abimanyu.d20.com
+```
 ## Soal 14
 Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 ## Soal 15
