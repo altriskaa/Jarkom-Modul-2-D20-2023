@@ -17,7 +17,7 @@ Berikut adalah topologi yang akan dipakai
 Dengan konfigurasi setiap node sebagai berikut
 
 ```
-# Pandudewanata
+# Pandudewanata (Router)
 auto eth0
 iface eth0 inet dhcp
 
