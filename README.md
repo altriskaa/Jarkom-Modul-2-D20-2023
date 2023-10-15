@@ -326,7 +326,52 @@ Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf  l
 ```
 Lalu lakukan `service apache2 restart`  dan lakukan pengujian 
 ## Soal 17
-Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
+Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.  
+### Abimanyu
+Konfigurasi file `/etc/apache2/sites-available/rjp.baratayuda.abimanyu.d20.com.conf` dengan menambahkan virtual host baru yang berada pada port 14000 dan 14400  
+```
+<VirtualHost *:14000>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/grjp.baratayuda.abimanyu.d20.com
+        ServerName rjp.baratayuda.abimanyu.d20.com
+        ServerAlias www.rjp.baratayuda.abimanyu.d20.com
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+<VirtualHost *:14400>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/rjp.baratayuda.abimanyu.d20.com
+        ServerName rjp.baratayuda.abimanyu.d20.com
+        ServerAlias www.rjp.baratayuda.abimanyu.d20.com
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+Kemudian
+```
+a2ensite rjp.baratayuda.abimanyu.d20.com
+service apache2 restart
+mkdir /var/www/rjp.baratayuda.abimanyu.d20.com
+cp -r /var/www/rjp.baratayuda.abimanyu/. /var/www/rjp.baratayuda.abimanyu.d20.com/
+```
+Selanjutnya konfigurasi file `/etc/apache2/ports.conf` 
+```
+Listen 80
+Listen 14000
+Listen 14400
+<IfModule ssl_module>
+        Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+        Listen 443
+</IfModule>
+```
+Lalu `service apache2 restart`  dan lakukan pengujian 
 ## Soal 18
 Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 ## Soal 19
