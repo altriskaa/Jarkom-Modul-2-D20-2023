@@ -193,7 +193,8 @@ Buka file `abimanyu.d20.com.conf` pada direktori `/etc/apache2/sites-available/`
 ```
 Restart apache `service apache2 restart`
 ## Soal 13
-Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy 
+### Abimanyu
 Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf  
 ```
 <VirtualHost *:80>
@@ -224,7 +225,37 @@ Uji coba pada client
 lynx parikesit.abimanyu.d20.com
 ```
 ## Soal 14
-Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
+Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).  
+### Abimanyu
+Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf  
+```
+<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/parikesit.abimanyu.d20.com
+        ServerName parikesit.abimanyu.d20.com
+        ServerAlias www.parikesit.abimanyu.d20.com
+
+        ErrorDocument 404 /error/403.html
+        ErrorDocument 500 /error/403.html
+        ErrorDocument 502 /error/403.html
+        ErrorDocument 503 /error/403.html
+        ErrorDocument 504 /error/403.html
+
+        <Directory /var/www/parikesit.abimanyu.d20.com/public>
+                Options +Indexes
+        </Directory>
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /var/www/abimanyu.d20.com>
+                Options +FollowSymLinks -Multiviews
+                AllowOverride All
+        </Directory>
+</VirtualHost>
+```
+Lalu lakukan `service apache2 restart`  dan lakukan pengujian 
 ## Soal 15
 Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 ## Soal 16
