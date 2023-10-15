@@ -436,6 +436,54 @@ Konfigurasi file `/etc/apache2/sites-available/000-default.conf`
 
 </VirtualHost>
 ```
-Lalu Lalu `service apache2 restart` kemudian uji `lynx 192.201.3.3`
+Lalu `service apache2 restart` kemudian uji `lynx 192.201.3.3`
 ## Soal 20
-Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
+Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png. 
+### Abimanyu
+konfigurasi file `/var/www/parikesit.abimanyu.d20.com/.htaccess` 
+```
+echo "
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/public/images/(.*)abimanyu(.*)
+RewriteCond %{REQUEST_URI} !/public/images/abimanyu.png
+RewriteRule /.* http://parikesit.abimanyu.d20.com/public/images/abimanyu.png [L]
+"
+```
+Lalu konfigurasi file `/etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf`
+```
+<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/parikesit.abimanyu.d20.com
+        ServerName parikesit.abimanyu.d20.com
+        ServerAlias www.parikesit.abimanyu.d20.com
+
+	ErrorDocument 404 /error/404.html
+	ErrorDocument 403 /error/403.html
+
+        <Directory /var/www/parikesit.abimanyu.d20.com/public>
+                Options +Indexes
+        </Directory>
+
+	<Directory /var/www/parikesit.abimanyu.d20/secret>
+	        Options -Indexes  
+	        Deny from all 
+	</Directory>
+
+        Alias \"/js\" \"/var/www/parikesit.abimanyu.d20.com/public/js\"
+
+        <Directory /var/www/parikesit.abimanyu.d20.com>
+                Options +FollowSymLinks -Multiviews
+                AllowOverride All
+        </Directory>
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /var/www/abimanyu.d20.com>
+                Options +FollowSymLinks -Multiviews
+                AllowOverride All
+        </Directory>
+</VirtualHost>
+```
+Kemudian `service apache2 restart` dan lakukan pengujian
