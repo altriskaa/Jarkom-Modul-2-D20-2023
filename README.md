@@ -1,20 +1,426 @@
-# Jarkom-Modul-2-D20-2023
+# Laporan Resmi Praktikum Modul 1 Jarkom Kelompok D20
+
+## Anggota Kelompok
+NRP | Nama |
+--- | --- | 
+5025201041 | Khairuddin Nasty |
+5025211187 | Altriska Izzati Khairunnisa Hermawan |
+
 ## Soal 1
 Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjuna merupakan Load Balancer yang terdiri dari beberapa Web Server yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Buatlah topologi dengan pembagian [sebagai berikut](https://docs.google.com/spreadsheets/d/1OqwQblR_mXurPI4gEGqUe7v0LSr1yJViGVEzpMEm2e8/edit?usp=sharing). Folder topologi dapat diakses pada [drive berikut](https://drive.google.com/drive/folders/1Ij9J1HdIW4yyPEoDqU1kAwTn_iIxg3gk?usp=sharing) 
+
+### Topologi
+Berikut adalah topologi yang akan dipakai
+
+![image](https://github.com/altriskaa/Jarkom-Modul-2-D20-2023/assets/114663340/a89fb483-d02f-4189-97ae-c68a89e3f88e)
+
+Dengan konfigurasi setiap node sebagai berikut
+
+```
+# Pandudewanata
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 192.201.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 192.201.2.1
+	netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+	address 192.201.3.1
+	netmask 255.255.255.0
+
+# Werkudara (DNS Slave)
+auto eth0
+iface eth0 inet static
+	address 192.201.1.2
+	netmask 255.255.255.0
+	gateway 192.201.1.1
+
+# Yudhistira (DNS Master)
+auto eth0
+iface eth0 inet static
+	address 192.201.1.3
+	netmask 255.255.255.0
+	gateway 192.201.1.1
+
+# Nakula (Client)
+auto eth0
+iface eth0 inet static
+	address 192.201.2.2
+	netmask 255.255.255.0
+	gateway 192.201.2.1
+
+# Sadewa (Client)
+auto eth0
+iface eth0 inet static
+	address 192.201.2.3
+	netmask 255.255.255.0
+	gateway 192.201.2.1
+
+# Abimanyu (Web Server)
+auto eth0
+iface eth0 inet static
+	address 192.201.3.2
+	netmask 255.255.255.0
+	gateway 192.201.3.1
+
+# Prabukusuma (Web Server)
+auto eth0
+iface eth0 inet static
+	address 192.201.3.3
+	netmask 255.255.255.0
+	gateway 192.201.3.1
+
+# Wisanggeni (Web Server)
+auto eth0
+iface eth0 inet static
+	address 192.201.3.4
+	netmask 255.255.255.0
+	gateway 192.201.3.1
+
+# Arjuna (Load Balancer)
+auto eth0
+iface eth0 inet static
+	address 192.201.3.5
+	netmask 255.255.255.0
+	gateway 192.201.3.1
+
+```
+
 ## Soal 2
 Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
+
+### Jawaban
+#### Node Yudhistira
+Lakukan instalasi bind
+```
+apt-get update
+apt-get install bind9 -y
+```
+Lalu konfigurasi domain **arjuna.d20.com** pada **/etc/bind/named.conf.local**
+```
+echo 'zone "arjuna.d20.com" {
+	type master; 
+	file "/etc/bind/jarkom/arjuna.d20.com"; 
+};' > /etc/bind/named.conf.local
+```
+Setelah itu buat direktori baru dan isi file **arjuna.d20.com** seperti berikut
+```
+mkdir /etc/bind/jarkom
+cp /etc/bind/db.local /etc/bind/jarkom/arjuna.d20.com
+
+echo '$TTL	604800
+@	IN	SOA	arjuna.d20.com.	root.arjuna.d20.com.	(
+			2022100601	; Serial
+			604800		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800	)	; Negative Cache TTL
+;
+@	IN	NS	arjuna.d20.com.
+@	IN	A	192.201.3.5
+www	IN 	CNAME	arjuna.d20.com.' > /etc/bind/jarkom/arjuna.d20.com
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Node Client
+Untuk mengetes, lakukan
+```
+ping arjuna.d20.com -c 5
+```
+
 ## Soal 3
 Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
+### Jawaban
+#### Node Yudhistira
+Lalukan konfigurasi domain **abimanyu.d20.com** pada **/etc/bind/named.conf.local**
+```
+zone "abimanyu.d20.com" {
+	type master; 
+	file "/etc/bind/jarkom/abimanyu.d20.com"; 
+};
+```
+Setelah itu buat direktori baru dan isi file **abimanyu.d20.com** seperti berikut
+```
+mkdir /etc/bind/jarkom
+cp /etc/bind/db.local /etc/bind/jarkom/abimanyu.d20.com
+
+echo '$TTL	604800
+@	IN	SOA	abimanyu.d20.com.	root.abimanyu.d20.com.	(
+			2022100601		; Serial
+			604800			; Refresh
+			86400			; Retry
+			2419200			; Expire
+			604800	)		; Negative Cache TTL
+;
+@	IN	NS	abimanyu.d20.com.
+@	IN	A	192.201.3.5
+www	IN 	CNAME	abimanyu.d20.com.' > /etc/bind/jarkom/abimanyu.d20.com
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Node Client
+Untuk mengetes, lakukan
+```
+ping abimanyu.d20.com -c 5
+```
+
 ## Soal 4 
 Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
+### Jawaban
+#### Node Yudhistira
+Untuk membuat subdomain, lakukan konfigurasi pada **/etc/bind/jarkom/abimanyu.d20.com**
+```
+$TTL	604800
+@	IN	SOA	abimanyu.d20.com.	root.abimanyu.d20.com.	(
+			2022100601	; Serial
+			604800		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800	)	; Negative Cache TTL
+;
+@		IN	NS	abimanyu.d20.com.
+@		IN	A	192.201.1.3	; IP Yudhistira
+www		IN 	CNAME	abimanyu.d20.com.
+parikesit	IN	A	192.201.3.2	; IP Abimanyu
+@		IN 	AAAA	::1
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Node Client
+Untuk mengetes, lakukan
+```
+ping parikesit.abimanyu.d20.com -c 5
+```
+
 ## Soal 5
 Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
+### Jawaban
+#### Node Yudhistira
+Lakukan konfigurasi pada **/etc/bind/named.conf.local**
+```
+zone "abimanyu.d20.com" {
+	type master; 
+	file "/etc/bind/jarkom/abimanyu.d20.com"; 
+};
+
+zone "1.201.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/jarkom/1.201.192.in-addr.arpa";
+};
+```
+Pada direktori baru `jarkom` dan isi file **1.201.192.in-addr.arpa** 
+```
+$TTL	604800
+@	IN	SOA	abimanyu.d20.com.	root.abimanyu.d20.com.	(
+			2022100601	; Serial
+			604800		; Refresh
+			86400		; Retry
+			2419200		; Expire
+			604800	)	; Negative Cache TTL
+;
+1.201.192.in-addr.arpa	IN	NS	abimanyu.d20.com.
+3			IN	PTR	abimanyu.d20.com.
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Node Client
+Untuk mengetes, lakukan
+```
+host -t PTR 192.201.1.3 
+```
+
 ## Soal 6
 Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga Werkudara sebagai DNS Slave untuk domain utama.
+
+### Jawaban
+#### Node Yudhistira
+Lakukan konfigurasi pada **/etc/bind/named.conf.local**
+```
+zone "abimanyu.d20.com" {
+	type master;
+	notify yes;
+	also-notify { 192.201.1.2; }; 
+	allow-transfer { 192.201.1.2; }; 
+	file "/etc/bind/jarkom/abimanyu.d20.com"; 
+};
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Node Werkudara
+Lakukan konfigurasi awal
+```
+echo "nameserver 192.201.1.3" > /etc/resolv.conf  
+apt-get update
+apt-get install bind9 -y
+```
+Lakukan konfigurasi pada **/etc/bind/named.conf.local**
+```
+zone "abimanyu.d20.com" {
+    type slave;
+    masters { 192.201.1.3; };
+    file "/var/lib/bind/abimanyu.d20.com";
+};
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Testing
+- Lakukan `service bind9 stop` terlebih dahulu pada **Node Yudhistira**
+- Pada **Node Client**
+Lakukan konfigurasi pada **/etc/resolv.conf**
+```
+echo '
+nameserver 192.201.1.2 # IP Yudhis master
+nameserver 192.201.1.3 # IP Werku slave 
+' > /etc/resolv.conf
+```
+Setelah itu lakukan ping
+```
+ping abimanyu.d20.com -c 5
+```
+
 ## Soal 7
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
+### Jawaban
+#### Node Yudhistira
+Lakukan konfigurasi pada **/etc/bind/jarkom/abimanyu.d20.com**
+```
+$TTL	604800
+@	IN	SOA	abimanyu.d20.com.	root.abimanyu.d20.com.	(
+			2022100601		; Serial
+			604800			; Refresh
+			86400			; Retry
+			2419200			; Expire
+			604800	)		; Negative Cache TTL
+;
+@		IN	NS	abimanyu.d20.com.
+@		IN	A	192.201.1.3	; IP Yudhistira
+www		IN 	CNAME	abimanyu.d20.com.
+parikesit	IN	A	192.201.3.2	; Mengarah ke IP Abimanyu
+baratayuda	IN	A	192.201.3.2	; Mengarah ke IP Abimanyu
+ns1		IN	A	192.201.1.2	; Didelegasikan ke IP Werkudara
+www		IN 	CNAME	baratayuda.abimanyu.d20.com.
+baratayuda		IN	NS	ns1
+@		IN 	AAAA	::1
+```
+Lakukan konfigurasi pada **/etc/bind/named.conf.options**
+```
+options {
+	directory "/var/cache/bind";
+	allow-query{any;};
+	auth-nxdomain no;	# conform to RFC1035
+	listen-on-v6{any;};
+};
+```
+Lakukan konfigurasi pada **/etc/bind/named.conf.local**
+```
+zone "abimanyu.d20.com" {
+    type master;
+    file "/etc/bind/jarkom/abimanyu.d20.com";
+    allow-transfer { 192.201.1.2; };
+};
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Node Werkudara
+Lakukan konfigurasi pada **/etc/bind/named.conf.options**
+```
+options {
+	directory "/var/cache/bind";
+	allow-query{any;};
+	auth-nxdomain no;	# conform to RFC1035
+	listen-on-v6{any;};
+};
+```
+Lakukan konfigurasi pada **/etc/bind/named.conf.local**
+```
+zone "baratayuda.abimanyu.d20.com" {
+    type master;
+    file "/etc/bind/Baratayuda/baratayuda.abimanyu.d20.com";
+};
+```
+Setelah itu buat direktori baru `Baratayuda` dan isi file **baratayuda.abimanyu.d20.com** seperti berikut
+```
+mkdir /etc/bind/Baratayuda
+cp /etc/bind/db.local /etc/bind/Baratayuda/baratayuda.abimanyu.d20.com
+
+$TTL	604800
+@	IN	SOA	abimanyu.d20.com.	root.abimanyu.d20.com.	(
+			2022100601		; Serial
+			604800			; Refresh
+			86400			; Retry
+			2419200			; Expire
+			604800	)		; Negative Cache TTL
+;
+@		IN	NS	abimanyu.d20.com.
+@		IN	A	192.201.1.2	; Dari IP Werkudara
+www		IN 	CNAME	abimanyu.d20.com.
+baratayuda	IN	A	192.201.3.2	; Menuju IP Abimanyu
+@		IN	AAAA	::1
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Testing
+- Pada **Node Client**
+Lakukan ping ke domain  
+```
+ping baratayuda.abimanyu.d20.com -c 5
+```
+
 ## Soal 8
 Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
+### Jawaban
+#### Node Werkudara
+Lakukan konfigurasi pada file **baratayuda.abimanyu.d20.com** seperti berikut
+```
+$TTL	604800
+@	IN	SOA	baratayuda.abimanyu.d20.com.	root.baratayuda.abimanyu.d20.com.	(
+			2022100601			; Serial
+			604800				; Refresh
+			86400				; Retry
+			2419200				; Expire
+			604800	)			; Negative Cache TTL
+;
+@		IN	NS	baratayuda.abimanyu.d20.com.
+@		IN	A	192.201.1.2	; Dari IP Werkudara
+www		IN 	CNAME	baratayuda.abimanyu.d20.com.
+rjp		IN	A	192.201.3.2	; Menuju IP Abimanyu
+@		IN	AAAA	::1
+```
+Restart bind9 
+```
+service bind9 restart
+```
+#### Testing
+- Pada **Node Client**
+Lakukan ping ke domain  
+```
+ping rjp.baratayuda.abimanyu.d20.com -c 5
+```
+
 ## Soal 9
 Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
 ### Arjuna
