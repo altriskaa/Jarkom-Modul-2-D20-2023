@@ -1,4 +1,4 @@
-# Laporan Resmi Praktikum Modul 1 Jarkom Kelompok D20
+# Laporan Resmi Praktikum Modul 2 Jarkom Kelompok D20
 
 ## Anggota Kelompok
 NRP | Nama |
