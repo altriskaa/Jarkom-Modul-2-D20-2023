@@ -33,7 +33,7 @@ Buat direktori baru di `/var/www` dengan nama `prabakusuma`
  mkdir /var/www/prabakusuma
 ```
 masuk direktori `prabakusuma` ltambahkan file `index.php` dari soal yang berisi seperti berikut
-```
+``` php
 <?php
 $hostname = gethostname();
 $date = date('Y-m-d H:i:s');
@@ -156,7 +156,7 @@ a2ensite abimanyu.d20.com.conf
 ```
 Restart apache dengan perintah `service apache2 restart`  
 Pindah ke direktori `/var/www` lalu buat direkortori baru dengan nama `abimanyu.d20.com`, lalu tambahkan file `index.php` dari soal yang berisi seperti ini
-```
+``` php
 <?php
 	if($_SERVER['REQUEST_URI'] == '/index.php/home' || $_SERVER['REQUEST_URI'] == '/home' || $_SERVER['REQUEST_URI'] == '/index.php' || $_SERVER['REQUEST_URI'] == '/') readfile('home.html');
 	else http_response_code(404);
@@ -373,7 +373,50 @@ Listen 14400
 ```
 Lalu `service apache2 restart`  dan lakukan pengujian 
 ## Soal 18
-Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
+Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy. 
+### Abimanyu
+Jalankan command berikut
+```
+htpasswd -c /etc/apache2/htpasswd baratayuda.d20 Wayang
+```
+Kemudian konfigurasi file `/etc/apache2/sites-available/rjp.baratayuda.abimanyu.d20.com.conf` 
+```
+<VirtualHost *:14000>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/grjp.baratayuda.abimanyu.d20.com
+        ServerName rjp.baratayuda.abimanyu.d20.com
+        ServerAlias www.rjp.baratayuda.abimanyu.d20.com
+
+        <Directory \"/var/www/rjp.baratayuda.abimanyu.d20.com\">
+                AuthType Basic
+                AuthName \"Restricted Content\"
+                AuthUserFile /etc/apache2/.htpasswd
+                Require valid-user
+        </Directory>
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+<VirtualHost *:14400>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/rjp.baratayuda.abimanyu.d20.com
+        ServerName rjp.baratayuda.abimanyu.d20.com
+        ServerAlias www.rjp.baratayuda.abimanyu.d20.com
+
+        <Directory \"/var/www/rjp.baratayuda.abimanyu.d20.com\">
+                AuthType Basic
+                AuthName \"Restricted Content\"
+                AuthUserFile /etc/apache2/.htpasswd
+                Require valid-user
+        </Directory>
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+Lalu `service apache2 restart` dan lakukan pengujian  
 ## Soal 19
 Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 ## Soal 20
