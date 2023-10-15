@@ -290,7 +290,41 @@ Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf
 ```
 Lalu lakukan `service apache2 restart`  dan lakukan pengujian 
 ## Soal 16
-Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi www.parikesit.abimanyu.yyy.com/js 
+Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi www.parikesit.abimanyu.yyy.com/js   
+### Abimanyu
+Konfigurasi file /etc/apache2/sites-available/parikesit.abimanyu.d20.com.conf  lalu tambahkan `Alias`
+```
+<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/parikesit.abimanyu.d20.com
+        ServerName parikesit.abimanyu.d20.com
+        ServerAlias www.parikesit.abimanyu.d20.com
+
+	ErrorDocument 404 /error/404.html
+	ErrorDocument 403 /error/403.html
+
+        <Directory /var/www/parikesit.abimanyu.d20.com/public>
+                Options +Indexes
+        </Directory>
+
+	<Directory /var/www/parikesit.abimanyu.d20/secret>
+	        Options -Indexes  
+	        Deny from all 
+	</Directory>
+
+        Alias \"/js\" \"/var/www/parikesit.abimanyu.d20.com/public/js\"
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory /var/www/abimanyu.d20.com>
+                Options +FollowSymLinks -Multiviews
+                AllowOverride All
+        </Directory>
+</VirtualHost>
+```
+Lalu lakukan `service apache2 restart`  dan lakukan pengujian 
 ## Soal 17
 Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 ## Soal 18
